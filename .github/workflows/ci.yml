@@ -19,7 +19,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          # No cache here — we handle it manually below for Yarn Berry
 
       - name: Activate Yarn 3.6.4
         run: |
@@ -40,6 +39,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --immutable
+
+      - name: Generate Prisma Client # ← added
+        run: yarn prisma generate
 
       - name: Lint
         run: yarn lint
