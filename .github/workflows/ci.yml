@@ -20,23 +20,28 @@ jobs:
           node-version: 22
           cache: yarn
 
+      # 🔥 THIS MUST COME IMMEDIATELY AFTER NODE SETUP
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Prepare Yarn 3.6.4
+      - name: Force Yarn 3.6.4
         run: corepack prepare yarn@3.6.4 --activate
+
+      # optional but helps debug CI issues
+      - name: Verify Yarn Version
+        run: yarn -v
 
       - name: Install Dependencies
         run: yarn install --immutable
 
-      - name: Run ESLint
+      - name: Lint
         run: yarn lint
 
-      - name: Run Type Check
+      - name: Type Check
         run: yarn type-check
 
-      - name: Run Tests
+      - name: Test
         run: yarn test --passWithNoTests
 
-      - name: Build Next.js
+      - name: Build
         run: yarn build
