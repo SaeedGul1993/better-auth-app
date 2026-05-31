@@ -15,7 +15,7 @@ export async function getUsers() {
     });
 
     return users;
-  } catch (error) {
+  } catch {
     throw new Error("Failed to fetch users");
   }
 }
@@ -29,7 +29,7 @@ export async function getUserDetailById(id: string) {
     });
 
     return userInfo;
-  } catch (error) {
+  } catch {
     throw new Error("Failed to fetch user info");
   }
 }

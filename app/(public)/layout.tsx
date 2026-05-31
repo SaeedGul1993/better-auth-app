@@ -1,6 +1,3 @@
-import { getSessionAction } from "@/actions/auth-actions";
-import { redirect } from "next/navigation";
-
 export default async function PublicLayout({
   children,
 }: {

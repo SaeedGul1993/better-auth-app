@@ -2,8 +2,16 @@
 
 import { auth } from "@/lib/auth";
 import { RegisterSchema } from "@/schemas/register-schema";
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "object" && error !== null && "message" in error) {
+    return String((error as Record<string, unknown>).message);
+  }
+  return "An unexpected error occurred";
+}
 
 export async function signupAction(formData: RegisterSchema) {
   const name = formData.name as string;
@@ -18,14 +26,14 @@ export async function signupAction(formData: RegisterSchema) {
       },
       headers: await headers(),
     });
-    updateTag("users");
+    revalidateTag("users", "max");
     return {
       success: true,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      message: error?.message || "Login failed",
+      message: getErrorMessage(error) || "Signup failed",
     };
   }
 }
@@ -44,10 +52,10 @@ export async function loginAction(formData: FormData) {
     return {
       success: true,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      message: error?.message || "Login failed",
+      message: getErrorMessage(error) || "Login failed",
     };
   }
 }
@@ -60,10 +68,10 @@ export async function logoutAction() {
     return {
       success: true,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      message: error?.message || "Login failed",
+      message: getErrorMessage(error) || "Logout failed",
     };
   }
 }
@@ -73,15 +81,14 @@ export async function getSessionAction() {
     const session = await auth.api.getSession({
       headers: await headers(),
     });
-    console.log(session, "lllllll");
     return {
       success: true,
       data: session,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      message: error?.message || "Login failed",
+      message: getErrorMessage(error) || "Failed to get session",
     };
   }
 }

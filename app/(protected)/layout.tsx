@@ -1,6 +1,3 @@
-import { Suspense } from "react";
-import DashboardSessionProvider from "./dashboard/DashboardSuspenseProvider";
-
 export default async function DashboardLayout({
   children,
 }: {

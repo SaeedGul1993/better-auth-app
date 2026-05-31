@@ -6,7 +6,7 @@ export default async function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let session = await getSessionAction();
+  const session = await getSessionAction();
 
   if (session?.data) return redirect("/dashboard");
 
