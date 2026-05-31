@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { cacheTag } from "next/cache";
-import { cache } from "react";
 
 export async function getUsers() {
   "use cache";
@@ -33,7 +32,3 @@ export async function getUserDetailById(id: string) {
     throw new Error("Failed to fetch user info");
   }
 }
-
-export const getUser = cache(async (id: string) => {
-  return getUserDetailById(id);
-});
