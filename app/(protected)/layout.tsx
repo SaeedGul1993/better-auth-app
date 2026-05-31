@@ -1,0 +1,18 @@
+import { Suspense } from "react";
+import DashboardSessionProvider from "./dashboard/DashboardSuspenseProvider";
+
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <div className="flex flex-col items-center justify-center min-h-screen  bg-gray-200">
+        <div className="flex flex-col items-center justify-center">
+          {children}
+        </div>
+      </div>
+    </>
+  );
+}
