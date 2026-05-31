@@ -11,37 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: yarn
 
-      # 🔥 THIS MUST COME IMMEDIATELY AFTER NODE SETUP
-      - name: Enable Corepack
-        run: corepack enable
+      # FORCE COREPACK BEFORE ANY YARN CALL
+      - name: Enable Corepack + remove Yarn 1 conflict
+        run: |
+          corepack enable
+          corepack prepare yarn@3.6.4 --activate
+          which yarn
+          yarn -v
 
-      - name: Force Yarn 3.6.4
-        run: corepack prepare yarn@3.6.4 --activate
-
-      # optional but helps debug CI issues
-      - name: Verify Yarn Version
-        run: yarn -v
-
-      - name: Install Dependencies
-        run: yarn install --immutable
+      # IMPORTANT: DO NOT rely on "yarn"
+      - name: Install dependencies
+        run: corepack yarn install --immutable
 
       - name: Lint
-        run: yarn lint
+        run: corepack yarn lint
 
-      - name: Type Check
-        run: yarn type-check
+      - name: Type check
+        run: corepack yarn type-check
 
       - name: Test
-        run: yarn test --passWithNoTests
+        run: corepack yarn test --passWithNoTests
 
       - name: Build
-        run: yarn build
+        run: corepack yarn build

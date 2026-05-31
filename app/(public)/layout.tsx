@@ -6,9 +6,5 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let session = await getSessionAction();
-
-  if (session?.data) return redirect("/dashboard");
-
   return <div className="min-h-screen p-10 bg-gray-100">{children}</div>;
 }
