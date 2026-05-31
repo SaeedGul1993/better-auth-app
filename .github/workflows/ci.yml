@@ -2,13 +2,9 @@ name: Next.js CI
 
 on:
   push:
-    branches:
-      - main
-      - develop
-
+    branches: [main, develop]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
@@ -24,11 +20,14 @@ jobs:
           node-version: 22
           cache: yarn
 
-      - name: Enable Corepack (Yarn support)
+      - name: Enable Corepack
         run: corepack enable
 
+      - name: Prepare Yarn 3.6.4
+        run: corepack prepare yarn@3.6.4 --activate
+
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Run ESLint
         run: yarn lint
