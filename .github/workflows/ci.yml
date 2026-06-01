@@ -60,6 +60,13 @@ jobs:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
 
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build
+          path: .next
+          retention-days: 1
+
   deploy-production:
     runs-on: ubuntu-latest
     needs: build
@@ -81,6 +88,12 @@ jobs:
           corepack prepare yarn@3.6.4 --activate
           yarn -v
 
+      - name: Download build output
+        uses: actions/download-artifact@v4
+        with:
+          name: nextjs-build
+          path: .next
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -89,15 +102,6 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Build Project Artifacts (Production)
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
 
       - name: Deploy to Vercel (Production)
         id: deploy
