@@ -7,8 +7,11 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: Production
+      url: ${{ steps.deploy.outputs.production-url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -60,50 +63,16 @@ jobs:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
 
-      - name: Upload build output
-        uses: actions/upload-artifact@v4
-        with:
-          name: nextjs-build
-          path: .next
-          retention-days: 1
-
-  deploy-production:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: Production
-      url: ${{ steps.deploy.outputs.production-url }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Activate Yarn 3.6.4
-        run: |
-          corepack prepare yarn@3.6.4 --activate
-          yarn -v
-
-      - name: Download build output
-        uses: actions/download-artifact@v4
-        with:
-          name: nextjs-build
-          path: .next
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Pull Vercel Environment (Production)
+      - name: Pull Vercel Environment
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Deploy to Vercel (Production)
+      - name: Deploy to Vercel
         id: deploy
         run: |
           url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
