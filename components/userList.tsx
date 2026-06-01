@@ -2,7 +2,6 @@ import { getUsers } from "@/actions/user-actions";
 import Link from "next/link";
 
 type User = Awaited<ReturnType<typeof getUsers>>[number];
-
 const UserList = async () => {
   const users = await getUsers();
   return (
